@@ -2,10 +2,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from sqlalchemy import text
 
 from app.api.routes.documents import router as documents_router
+from app.api.routes.retrieval import router as retrieval_router
 from app.core.config import settings
 from app.db.session import Base, engine
+from app.models.chunk import Chunk
 from app.models.document import Document
 from app.models.feedback import Feedback
 from app.models.question import Question
@@ -18,12 +21,15 @@ class EchoRequest(BaseModel):
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
+    with engine.begin() as connection:
+        connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     Base.metadata.create_all(bind=engine)
     yield
 
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(documents_router)
+app.include_router(retrieval_router)
 
 
 @app.get("/health")

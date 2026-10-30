@@ -7,8 +7,12 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.db.session import get_db
+from app.models.chunk import Chunk
 from app.models.document import Document
-from app.schemas.document import DocumentOut
+from app.schemas.document import ChunkOut, DocumentOut
+from app.services.chunker import chunk_pages, clean_pages
+from app.services.embedder import embed_texts
+from app.services.pdf_parser import extract_pages
 
 router = APIRouter()
 
@@ -28,9 +32,44 @@ def upload_document(file: UploadFile, db: Session = Depends(get_db)) -> Document
 
     destination = settings.upload_dir / f"{uuid4().hex}_{filename}"
     destination.write_bytes(content)
-    document = Document(filename=filename, storage_path=str(destination))
     try:
+        try:
+            pages = extract_pages(destination)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+        if sum(len(text) for _, text in pages) < 200:
+            raise HTTPException(
+                status_code=422,
+                detail="No extractable text. Scanned PDFs are not supported yet.",
+            )
+
+        chunks = chunk_pages(clean_pages(pages))
+        embeddings = embed_texts([chunk_text for _, chunk_text in chunks])
+        document = Document(
+            filename=filename,
+            storage_path=str(destination),
+            status="processed",
+            page_count=len(pages),
+        )
         db.add(document)
+        db.flush()
+        db.add_all(
+            [
+                Chunk(
+                    document_id=document.id,
+                    page_number=page_number,
+                    chunk_index=chunk_index,
+                    content=chunk_text,
+                    token_count=len(chunk_text.split()),  # Word count is a rough token-count proxy.
+                    embedding=embedding,
+                    embedding_model=settings.embedding_model,
+                )
+                for chunk_index, ((page_number, chunk_text), embedding) in enumerate(
+                    zip(chunks, embeddings, strict=True)
+                )
+            ]
+        )
         db.commit()
         db.refresh(document)
     except Exception:
@@ -51,6 +90,15 @@ def get_document(document_id: int, db: Session = Depends(get_db)) -> Document:
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
     return document
+
+
+@router.get("/documents/{document_id}/chunks", response_model=list[ChunkOut])
+def list_document_chunks(document_id: int, db: Session = Depends(get_db)) -> list[Chunk]:
+    # temporary, for inspection
+    if db.get(Document, document_id) is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    statement = select(Chunk).where(Chunk.document_id == document_id).order_by(Chunk.chunk_index)
+    return list(db.scalars(statement).all())
 
 
 @router.delete("/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT)

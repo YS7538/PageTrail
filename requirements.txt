@@ -4,3 +4,6 @@ python-multipart
 pydantic-settings
 sqlalchemy>=2.0
 psycopg[binary]
+pymupdf
+sentence-transformers
+pgvector

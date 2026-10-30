@@ -11,3 +11,13 @@ class DocumentOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ChunkOut(BaseModel):
+    id: int
+    page_number: int
+    chunk_index: int
+    token_count: int
+    content: str
+
+    model_config = {"from_attributes": True}
