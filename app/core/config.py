@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     upload_dir: Path = Path("data/uploads")
     max_upload_mb: int = 20
     database_url: str
+    app_api_key: str | None = None
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     gemini_api_key: str = ""
     generation_model: str = "gemini-2.5-flash"

@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.core.security import require_api_key
 from app.models.chunk import Chunk
 from app.models.document import Document
 from app.models.feedback import Feedback
@@ -12,7 +13,7 @@ from app.schemas.feedback import FeedbackCreate, FeedbackOut
 from app.schemas.question import QuestionCreate, QuestionDetail, QuestionResponse
 from app.services.rag_pipeline import AnswerGenerationError, answer_question
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_api_key)])
 
 
 @router.post("/questions", response_model=QuestionResponse, status_code=status.HTTP_201_CREATED)

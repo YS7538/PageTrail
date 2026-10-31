@@ -2,7 +2,7 @@
 
 An evidence-grounded research assistant. Upload research papers (PDF), ask questions, and receive answers generated from retrieved passages, with validated source citations (document, page, passage).
 
-> **Status:** Retrieval, reranking, cited answer generation and an evaluation suite are complete. Feedback, automated tests, containerization and deployment are in progress.
+> **Status:** Complete and containerized: ingestion, semantic retrieval, cross-encoder reranking, cited answer generation, feedback, automated tests, an evaluation suite and a Docker build. Not yet deployed to a public host.
 
 ## Problem
 
@@ -53,6 +53,8 @@ Chunks never cross page boundaries, so every chunk has an exact page number. Cit
 | Embeddings | sentence-transformers, `BAAI/bge-small-en-v1.5` |
 | Reranking | Cross-encoder `cross-encoder/ms-marco-MiniLM-L-6-v2` |
 | Generation | Gemini API (`google-genai`), model set via config |
+| Testing | pytest, httpx |
+| Packaging | Docker, Docker Compose |
 
 ## Project structure
 
@@ -60,7 +62,7 @@ Chunks never cross page boundaries, so every chunk has an exact page number. Cit
 app/
   main.py
   api/routes/        # documents.py, questions.py
-  core/config.py
+  core/              # config.py, security.py
   db/session.py
   models/            # document, chunk, question, retrieved_chunk, feedback
   schemas/
@@ -71,10 +73,13 @@ scripts/
   evaluate_retrieval.py     # vector vs reranked retrieval, candidate sweep
   compare_encoders.py       # embedding model comparison
   compare_chunk_sizes.py    # chunk size comparison
+tests/
 data/
   uploads/
   eval_questions.json
   results/*.csv
+Dockerfile
+docker-compose.yml
 ```
 
 Routes handle HTTP, models handle persistence, services hold the pipeline. Only `generator.py` depends on the LLM provider.
@@ -107,19 +112,32 @@ CANDIDATES=20
 TOP_K=6
 MIN_SCORE=0.68
 USE_RERANKER=true
+APP_API_KEY=<optional shared secret>
+TEST_DATABASE_URL=<separate database, tests only>
 ```
 
-The app enables the `vector` extension and creates tables on startup. The first upload and first question download the embedding and reranker models.
+The app enables the `vector` extension and creates tables on startup. The first upload and first question download the embedding and reranker models (not needed in Docker, where they are baked into the image).
 
 Interactive API docs: `http://127.0.0.1:8000/docs`
 
 > **Privacy:** retrieved passages are sent to the Gemini API with every question. On Google's free tier, prompts may be used to improve its products, so do not upload confidential or unpublished papers.
 
+## Run with Docker
+
+```bash
+docker compose build
+docker compose up
+```
+
+The image uses CPU-only PyTorch and downloads both models at build time, so containers do not fetch anything at runtime (image size about 2.9 GB). Configuration comes from `.env` at runtime; no secrets are copied into the image. The database is the hosted Postgres from `DATABASE_URL`.
+
+If `APP_API_KEY` is set, every endpoint except `GET /health` requires an `X-API-Key` header (use **Authorize** on the `/docs` page). All users share one document store, so a public demo should always be key-protected.
+
 ## API
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/health` | Health check |
+| GET | `/health` | Health check (always open) |
 | POST | `/documents` | Upload a PDF; extracts, chunks and embeds it |
 | GET | `/documents` | List documents |
 | GET | `/documents/{id}` | Get one document |
@@ -127,6 +145,7 @@ Interactive API docs: `http://127.0.0.1:8000/docs`
 | GET | `/documents/{id}/chunks` | Inspect chunks (temporary, for debugging) |
 | POST | `/questions` | Ask a question over selected (or all) documents |
 | GET | `/questions/{id}` | Retrieve a stored question, answer and citations |
+| POST | `/questions/{id}/feedback` | Store a rating (1-5) and optional comment |
 
 Example request:
 
@@ -150,7 +169,16 @@ Response shape (values elided):
 }
 ```
 
-Errors: `400` invalid or unreadable PDF, `404` unknown document or question, `413` file too large, `422` no extractable text (scanned PDFs unsupported), `502` generation failure.
+Errors: `400` invalid or unreadable PDF, `401` missing or wrong API key (when enabled), `404` unknown document or question, `413` file too large, `422` no extractable text (scanned PDFs unsupported) or invalid request, `502` generation failure.
+
+## Testing
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+The suite covers upload validation (wrong type, fake PDF, oversized, no text), ingestion (page numbers, embedding storage), document CRUD and cascade deletion, question scoping to selected documents, citation validation (unknown source IDs removed, citations map to real chunks), the insufficient-evidence path, generation failure handling, persistence, feedback validation and API-key protection. Embeddings, reranker and LLM are replaced by deterministic fakes, so tests need no model downloads or Gemini access. They run against a separate PostgreSQL database with pgvector (`TEST_DATABASE_URL`), and refuse to run if it equals `DATABASE_URL`.
 
 ## Evaluation
 
@@ -225,7 +253,9 @@ Median reranking time for 20 candidates (160-word chunks, laptop CPU): 749 ms. W
 - Citation validation checks that source IDs exist, not that each claim is supported; answer grounding has been checked only by hand on individual answers.
 - The evaluation set is small (24 answerable questions, 3 papers), single-annotator and page-level; the configuration was chosen on the same questions it is reported on, and two labels were corrected after seeing results.
 - No numeric abstention threshold beyond the cosine gate for clearly unrelated questions.
+- Single shared document store; access control is one shared API key, not per-user accounts.
 - Ingestion is synchronous; chunk size is measured in words as a proxy for tokens.
+- The Docker image is about 2.9 GB, and the app has not been deployed to a public host.
 
 ## Roadmap
 
@@ -235,6 +265,7 @@ Median reranking time for 20 candidates (160-word chunks, laptop CPU): 749 ms. W
 - [x] Embeddings, pgvector, semantic retrieval
 - [x] Cited answer generation, question history
 - [x] Cross-encoder reranking and evaluation (encoders, chunk size, candidate count)
-- [ ] Feedback endpoint and automated tests
-- [ ] Docker and deployment
+- [x] Feedback endpoint, automated tests
+- [x] Docker build and shared-key access protection
+- [ ] Cloud deployment
 - [ ] Systematic answer-grounding evaluation

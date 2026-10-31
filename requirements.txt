@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 python-multipart
 pydantic-settings
+python-dotenv
 sqlalchemy>=2.0
 psycopg[binary]
 pymupdf

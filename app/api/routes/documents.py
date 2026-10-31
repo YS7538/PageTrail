@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.core.security import require_api_key
 from app.db.session import get_db
 from app.models.chunk import Chunk
 from app.models.document import Document
@@ -14,7 +15,7 @@ from app.services.chunker import chunk_pages, clean_pages
 from app.services.embedder import embed_texts
 from app.services.pdf_parser import extract_pages
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_api_key)])
 
 
 @router.post("/documents", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
