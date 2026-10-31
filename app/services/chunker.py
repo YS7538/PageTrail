@@ -1,8 +1,8 @@
 import re
 from collections import Counter
 
-CHUNK_WORDS = 320
-OVERLAP_WORDS = 50
+CHUNK_WORDS = 160
+OVERLAP_WORDS = 25
 
 
 def clean_pages(pages: list[tuple[int, str]]) -> list[tuple[int, str]]:
@@ -39,15 +39,19 @@ def clean_pages(pages: list[tuple[int, str]]) -> list[tuple[int, str]]:
     return cleaned_pages
 
 
-def chunk_pages(pages: list[tuple[int, str]]) -> list[tuple[int, str]]:
+def chunk_pages(
+    pages: list[tuple[int, str]],
+    chunk_words: int = CHUNK_WORDS,
+    overlap_words: int = OVERLAP_WORDS,
+) -> list[tuple[int, str]]:
     chunks = []
-    step = CHUNK_WORDS - OVERLAP_WORDS
+    step = chunk_words - overlap_words
     for page_number, text in pages:
         words = text.split()
         for start in range(0, len(words), step):
-            chunk_words = words[start : start + CHUNK_WORDS]
-            if chunk_words:
-                chunks.append((page_number, " ".join(chunk_words)))
-            if start + CHUNK_WORDS >= len(words):
+            words_in_chunk = words[start : start + chunk_words]
+            if words_in_chunk:
+                chunks.append((page_number, " ".join(words_in_chunk)))
+            if start + chunk_words >= len(words):
                 break
     return chunks

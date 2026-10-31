@@ -56,8 +56,37 @@ Expected page score:- NOT IN TOP K (Very weird but i guess this happened bcz the
 Expected page: Not specified in the paper (Unanswerable)
 Highest scored page:- Page 11 with score 0.773
 
+Answer from the RAG based model:- {
+  "question_id": 2,
+  "answer": "The passages state that there is a cost involved in training the router to reliably extract arguments [S2]. Retraining the router is described as a \"relatively lightweight task\" [S5]. However, the passages do not provide the exact computational cost in terms of GPU hours or monetary cost for training the Jurassic-X arithmetic extraction model.",
+  "citations": [
+    {
+      "document_id": 6,
+      "filename": "2205.00445v1.pdf",
+      "page_number": 5,
+      "chunk_id": 7,
+      "snippet": "a specialized neural net and therefore invoking a neural module is easy since the neural-to-neural interface is natural. However, when a neural network needs to access a database, make an API call, or invoke another symbolic computation, it must extract from the text discrete parameters required by "
+    },
+    {
+      "document_id": 6,
+      "filename": "2205.00445v1.pdf",
+      "page_number": 4,
+      "chunk_id": 5,
+      "snippet": "Thus a MRKL system consists of an extendable set of modules, which we term ’experts’, and a router that routes every incoming natural language input to a module that can best respond to the input (the output of that module can be the output of the MRKL system, or be routed to another module). These "
+    }
+  ],
+  "latency_ms": 5626
+}
+
 ### 5. Totally Unrelated question
 
 **Q11.** What is the capital of germany?
 Expected: Not answerable
 HIghest scored page:- No. 1 with score of 0.413
+
+Answer From the RAG based Model:- {
+  "question_id": 3,
+  "answer": "The selected documents do not contain enough relevant evidence to answer this question.",
+  "citations": [],
+  "latency_ms": 345
+}

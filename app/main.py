@@ -5,13 +5,14 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.api.routes.documents import router as documents_router
-from app.api.routes.retrieval import router as retrieval_router
+from app.api.routes.questions import router as questions_router
 from app.core.config import settings
 from app.db.session import Base, engine
 from app.models.chunk import Chunk
 from app.models.document import Document
 from app.models.feedback import Feedback
 from app.models.question import Question
+from app.models.retrieved_chunk import RetrievedChunk
 
 
 class EchoRequest(BaseModel):
@@ -29,7 +30,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(documents_router)
-app.include_router(retrieval_router)
+app.include_router(questions_router)
 
 
 @app.get("/health")

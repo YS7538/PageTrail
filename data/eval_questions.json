@@ -1,0 +1,248 @@
+[
+    {
+        "question": "What was the learning rate used during the prompt-tuning experiments conducted with the J1-large model?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        8
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What was the name of the AI21 Labs implementation of the MRKL architecture?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        1,
+        4
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How many prompt tokens were used during the prompt-tuning experiments?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        8
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does the MRKL architecture route incoming natural language inputs to different expert modules, and what happens when no suitable expert is available?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        4
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does the data augmentation methodology generate training and testing examples for arithmetic operations, and what dimensions characterize each example?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        7,
+        8
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does Jurassic-X use a language model and a symbolic calculator together to solve arithmetic problems expressed in natural language?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        5,
+        6,
+        7
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How did Jurassic-X's arithmetic generalization performance compare with GPT-3 when tested on numbers containing different numbers of digits?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        9
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How did prompt-tuning compare with few-shot prompting when generalizing to arithmetic questions where operands were expressed as words instead of digits?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        14
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What limitations or failure cases did the authors identify when generalizing from single-operation arithmetic problems to two-operation problems?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [
+        12,
+        13
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What was the exact computational cost (GPU hours and monetary cost) of training the Jurassic-X arithmetic extraction model?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [],
+        "answerable": false
+    },
+    {
+        "question": "What is the capital of Germany?",
+        "document": "2205.00445v1.pdf",
+        "expected_pages": [],
+        "answerable": false
+    },
+    {
+        "question": "What learning rate and batch size were used to finetune Toolformer on the augmented dataset?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        5
+        ],
+        "answerable": true
+    },
+    {
+        "question": "Which base language model and parameter count were used to build Toolformer?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        2,
+        4,
+        11
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does Toolformer decide whether to keep or filter out a sampled API call during the dataset augmentation process?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        3
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What are the five tools/APIs integrated into Toolformer, and what special tokens are used to mark API calls?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        2,
+        4
+        ],
+        "answerable": true
+    },
+    {
+        "question": "At what model size parameter threshold does the ability to effectively leverage external tools emerge in LMs according to the scaling laws analysis?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        8,
+        9
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What heuristic filters were used to select documents from CCNet for generating Calculator API call samples?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        4,
+        15
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does Toolformer alter its greedy decoding strategy at inference time using the hyperparameter k?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        5,
+        6,
+        8,
+        9
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How many total API call examples remained in the final dataset for each tool when setting the filtering threshold tau_f to 1.0?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [
+        5
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What total carbon footprint (in kg CO2 equivalent) was produced while training Toolformer across all GPU clusters?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [],
+        "answerable": false
+    },
+    {
+        "question": "What is the distance between the Earth and the Moon?",
+        "document": "2302.04761v1.pdf",
+        "expected_pages": [],
+        "answerable": false
+    },
+    {
+        "question": "What are the four main stages in the workflow of HuggingGPT?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        2,
+        3
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What four slots make up the standardized task parsing JSON template in HuggingGPT's Task Planning stage?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        5,
+        14
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does HuggingGPT handle resource dependencies between tasks during execution using special reference symbols?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        5,
+        6
+        ],
+        "answerable": true
+    },
+    {
+        "question": "Which specific OpenAI GPT models were evaluated as the main LLMs controlling HuggingGPT in the experiments?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        7
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does HuggingGPT filter and rank candidate expert models from Hugging Face before assigning them to subtasks?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        6
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What three distinct task categories were established to evaluate the task planning capability of LLMs in HuggingGPT?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        7,
+        8
+        ],
+        "answerable": true
+    },
+    {
+        "question": "How does HuggingGPT utilize hybrid endpoints (local vs. cloud) during system deployment?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [
+        7,
+        14
+        ],
+        "answerable": true
+    },
+    {
+        "question": "What was the total financial budget spent on OpenAI API calls during the evaluation of HuggingGPT?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [],
+        "answerable": false
+    },
+    {
+        "question": "Who painted the Mona Lisa?",
+        "document": "2303.17580v4.pdf",
+        "expected_pages": [],
+        "answerable": false
+    }
+]
