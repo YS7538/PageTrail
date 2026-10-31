@@ -5,8 +5,10 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.chunk import Chunk
 from app.models.document import Document
+from app.models.feedback import Feedback
 from app.models.question import Question
 from app.models.retrieved_chunk import RetrievedChunk
+from app.schemas.feedback import FeedbackCreate, FeedbackOut
 from app.schemas.question import QuestionCreate, QuestionDetail, QuestionResponse
 from app.services.rag_pipeline import AnswerGenerationError, answer_question
 
@@ -76,3 +78,26 @@ def get_question(question_id: int, db: Session = Depends(get_db)) -> QuestionDet
         generation_model=question.generation_model,
         created_at=question.created_at,
     )
+
+
+@router.post(
+    "/questions/{question_id}/feedback",
+    response_model=FeedbackOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_feedback(
+    question_id: int,
+    request: FeedbackCreate,
+    db: Session = Depends(get_db),
+) -> Feedback:
+    if db.get(Question, question_id) is None:
+        raise HTTPException(status_code=404, detail="Question not found")
+    feedback = Feedback(
+        question_id=question_id,
+        rating=request.rating,
+        comment=request.comment,
+    )
+    db.add(feedback)
+    db.commit()
+    db.refresh(feedback)
+    return feedback
