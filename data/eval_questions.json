@@ -80,12 +80,14 @@
         "question": "What was the exact computational cost (GPU hours and monetary cost) of training the Jurassic-X arithmetic extraction model?",
         "document": "2205.00445v1.pdf",
         "expected_pages": [],
+        "on_topic": true,
         "answerable": false
     },
     {
         "question": "What is the capital of Germany?",
         "document": "2205.00445v1.pdf",
         "expected_pages": [],
+        "on_topic":false,
         "answerable": false
     },
     {
@@ -164,12 +166,14 @@
         "question": "What total carbon footprint (in kg CO2 equivalent) was produced while training Toolformer across all GPU clusters?",
         "document": "2302.04761v1.pdf",
         "expected_pages": [],
+        "on_topic":true,
         "answerable": false
     },
     {
         "question": "What is the distance between the Earth and the Moon?",
         "document": "2302.04761v1.pdf",
         "expected_pages": [],
+        "on_topic":false,
         "answerable": false
     },
     {
@@ -237,12 +241,14 @@
         "question": "What was the total financial budget spent on OpenAI API calls during the evaluation of HuggingGPT?",
         "document": "2303.17580v4.pdf",
         "expected_pages": [],
+        "on_topic":true,
         "answerable": false
     },
     {
         "question": "Who painted the Mona Lisa?",
         "document": "2303.17580v4.pdf",
         "expected_pages": [],
+        "on_topic":false,
         "answerable": false
     }
 ]
